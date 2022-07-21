@@ -1,3 +1,4 @@
+#This script reads temperatures from a .csv file and sends them over serial at defined interval (default 1 minute)
 import csv
 import serial
 import time
