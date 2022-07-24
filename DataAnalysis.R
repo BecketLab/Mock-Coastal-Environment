@@ -111,9 +111,9 @@ stat_d2 <- otu_m[7:11, ]
 sampdf_d2 <- sampdf[7:11, ]
 
 #ANOSIM
-ano = anosim(otu_m, sampdf$Day, distance = "euclidean", permutations = 118)
-ano_d1 = anosim(stat_d1, sampdf_d1$Site, distance = "euclidean", permutations = 118)
-ano_d2 = anosim(stat_d2, sampdf_d2$Site, distance = "euclidean", permutations = 118)
+ano = anosim(otu_m, sampdf$Day, distance = "euclidean", permutations = 99)
+ano_d1 = anosim(stat_d1, sampdf_d1$Site, distance = "euclidean", permutations = 99)
+ano_d2 = anosim(stat_d2, sampdf_d2$Site, distance = "euclidean", permutations = 99)
 
 ano
 ano_d1
@@ -124,13 +124,13 @@ stat_ds <- otu_m[2:11, ]
 sampdf_ds <- sampdf[2:11, ]
 
 perma = adonis2(formula = stat_all ~ sampdf$Day, 
-               permutations = 118,  method = "euclidean")
+               permutations = 99,  method = "euclidean")
 perma_d1 = adonis2(formula = stat_d1 ~ sampdf_d1$Site,
-               permutations = 118,  method = "euclidean")
+               permutations = 99,  method = "euclidean")
 perma_d2 = adonis2(formula = stat_d2 ~ sampdf_d2$Site,
-               permutations = 118,  method = "euclidean")
+               permutations = 99,  method = "euclidean")
 perma_ds = adonis2(formula = stat_ds ~ sampdf_ds$Day,
-               permutations = 118,  method = "euclidean")
+               permutations = 99,  method = "euclidean")
   
 perma
 perma_d1
