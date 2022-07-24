@@ -104,7 +104,7 @@ kraken2 --db /File/Path/to/GTDB/db --threads 64 --classified-out /File/Path/to/k
 # Install kraken-biom
 pip install kraken-biom
 
-kraken-biom S1.txt S2.txt S3.txt S4.txt S5.txt S6.txt S7.txt S8.txt S9.txt S10.txt S11.txt
+kraken-biom /File/Path/to/kraken2_gtdb_output/S1.kreport /File/Path/to/kraken2_gtdb_output/S2.kreport /File/Path/to/kraken2_gtdb_output/S3.kreport /File/Path/to/kraken2_gtdb_output/S4.kreport /File/Path/to/kraken2_gtdb_output/S5.kreport /File/Path/to/kraken2_gtdb_output/S6.kreport /File/Path/to/kraken2_gtdb_output/S7.kreport /File/Path/to/kraken2_gtdb_output/S8.kreport /File/Path/to/kraken2_gtdb_output/S9.kreport /File/Path/to/kraken2_gtdb_output/S10.kreport /File/Path/to/kraken2_gtdb_output/S11.kreport
 
 
 
