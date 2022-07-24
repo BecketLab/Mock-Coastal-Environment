@@ -12,8 +12,8 @@ library(ggtext)
 theme_set(theme_bw())
 
 ### Change this to your working drive
-setwd("C:/Pearl_Code")
-merged_metagenomes <- import_biom("pearl.biom")
+setwd("/File/Path/to/kraken-biom_output/")
+merged_metagenomes <- import_biom("table.biom")
 
 ### Sample names
 samnames <- c("Initial_0_0", "In situ_S1_24", "In situ_S2_24", "In situ_S3_24", "In vitro_M1_24", "In vitro_M2_24", "In situ_S1_48", "In situ_S2_48", "In situ_S3_48", "In vitro_M1_48", "In vitro_M2_48")
