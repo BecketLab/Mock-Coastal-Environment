@@ -1,6 +1,7 @@
 ### Coastal Metagenomes Kraken2-GTDB data analysis ###
 
-### First step - Install miniconda and mamba - if you have these or any future programs already installed, diregard prompts to install
+### First step - Install miniconda and mamba
+# If you have these or any future programs already installed, disregard prompts to install
 
 
 ### FastQC and MultiCQC raw reads, in parallel - assumes files are .fq.gz suffix - adjust as needed
