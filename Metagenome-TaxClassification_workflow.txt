@@ -4,7 +4,7 @@
 # If you have these or any future programs already installed, disregard prompts to install
 
 
-### FastQC and MultiCQC raw reads, in parallel - assumes files are .fq.gz suffix - adjust as needed
+### FastQC and MultiQC raw reads, in parallel - assumes files are .fq.gz suffix - adjust as needed
 
 # Install FastQC and MultiQC
 mamba install -c bioconda fastqc
