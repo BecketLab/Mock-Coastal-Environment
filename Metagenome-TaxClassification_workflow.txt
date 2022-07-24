@@ -61,7 +61,7 @@ parallel --gnu "trimmomatic PE {1} {2} {1/.}_paired.fastq.gz {1/.}_unpaired.fast
 # Make new directory and move trimmed-paired files into that directory
 mkdir trimmed_paired_files
 mv *_paired.fast.gz trimmed_paired_files
-
+cd trimmed_paired_files
 
 
 ### FastQC and MultiQC on Trimmed files, in parallel - assumes trimmed-paired files are fastq.gz suffix - adjust as needed   
@@ -105,6 +105,8 @@ kraken2 --db /File/Path/to/GTDB/db --threads 64 --classified-out /File/Path/to/k
 pip install kraken-biom
 
 kraken-biom S1.txt S2.txt S3.txt S4.txt S5.txt S6.txt S7.txt S8.txt S9.txt S10.txt S11.txt
+
+
 
 ### Additional data analysis found on DataAnalysis.R file
 
