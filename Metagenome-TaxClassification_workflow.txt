@@ -62,7 +62,7 @@ parallel --gnu "trimmomatic PE {1} {2} {1/.}_paired.fastq.gz {1/.}_unpaired.fast
 # Make new directory and move trimmed-paired files into that directory
 mkdir trimmed_paired_files
 mv *_paired.fast.gz trimmed_paired_files
-cd trimmed_paired_files
+cd /File/Path/to/trimmed_paired_files
 
 
 ### FastQC and MultiQC on Trimmed files, in parallel - assumes trimmed-paired files are fastq.gz suffix - adjust as needed   
