@@ -77,12 +77,9 @@ multiqc .
 # Install MEGAHIT
 mamba install -c bioconda megahit
 
-
-
 # Run MEGAHIT on forward and reverse reads of each sample
 # Change -t value to reflect number of parallel processors on your computer
-megahit -1 SAMPLE_R1.fastq.gz  -2 SAMPLE_R2.fastq.gz  -t 32  -o megahit_result_directory
-
+megahit -1 /File/Path/to/samplename_1.fastq.gz -2 /File/Path/to/samplename_2.fastq.gz -o /File/Path/to/megahit_output/samplename_megahit
 
 
 
@@ -99,7 +96,8 @@ http://ftp.tue.mpg.de/ebio/projects/struo2/GTDB_release202/
 
 # Run Kraken2 on assemblies
 # takes about 1 hour/GB of fastq files
-kraken2 --threads 32 --db /File/Path/to/GTDB/db final.contigs.fa
+kraken2 --db /File/Path/to/GTDB/db --threads 64 --classified-out /File/Path/to/kraken2_gtdb_output/samplename_cseqs#.fq --output /File/Path/to/kraken2_gtdb_output --report /File/Path/to/kraken2_gtdb_output/samplename.kreport /File/Path/to/megahit_output/samplename/final.contigs.fa
+
 
 ### kraken-biom - convert Kraken2 report to biom table
 
