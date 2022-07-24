@@ -1,0 +1,122 @@
+### Coastal Metagenomes Kraken2-GTDB data analysis ###
+
+### First step - Install miniconda and mamba - if you have these or any future programs already installed, diregard prompts to install
+
+
+### FastQC and MultiCQC raw reads, in parallel - assumes files are .fq.gz suffix - adjust as needed
+
+# Install FastQC and MultiQC
+mamba install -c bioconda fastqc
+pip install multiqc
+
+# Run FastQC and MultiQC
+ls *.fq.gz | parallel --gnu "fastqc {}"
+multiqc .
+
+
+### Trimmomatic to filter/trims reads, in parallel; need appropriate adapter sequence .fa files!
+
+# Install Trimmomatic
+mamba install -c bioconda trimmomatic
+
+
+## Prepare .fa file containing the following adapter sequences - Name file "TruSeq-PE.fa" - assumes library was made with TruSeq adapters - adjust as needed
+>PrefixPE/1
+AATGATACGGCGACCACCGAGATCTACACTCTTTCCCTACACGACGCTCTTCCGATCT
+>PrefixPE/2
+CAAGCAGAAGACGGCATACGAGATCGGTCTCGGCATTCCTGCTGAACCGCTCTTCCGATCT
+>PCR_Primer1
+AATGATACGGCGACCACCGAGATCTACACTCTTTCCCTACACGACGCTCTTCCGATCT
+>PCR_Primer1_rc
+AGATCGGAAGAGCGTCGTGTAGGGAAAGAGTGTAGATCTCGGTGGTCGCCGTATCATT
+>PCR_Primer2
+CAAGCAGAAGACGGCATACGAGATCGGTCTCGGCATTCCTGCTGAACCGCTCTTCCGATCT
+>PCR_Primer2_rc
+AGATCGGAAGAGCGGTTCAGCAGGAATGCCGAGACCGATCTCGTATGCCGTCTTCTGCTTG
+>FlowCell1
+TTTTTTTTTTAATGATACGGCGACCACCGAGATCTACAC
+>FlowCell2
+TTTTTTTTTTCAAGCAGAAGACGGCATACGA
+>PrefixPE/1-2
+TACACTCTTTCCCTACACGACGCTCTTCCGATCT
+>PrefixPE/2-2
+GTGACTGGAGTTCAGACGTGTGCTCTTCCGATCT
+>PE1
+TACACTCTTTCCCTACACGACGCTCTTCCGATCT
+>PE1_rc
+AGATCGGAAGAGCGTCGTGTAGGGAAAGAGTGTA
+>PE2
+GTGACTGGAGTTCAGACGTGTGCTCTTCCGATCT
+>PE2_rc
+AGATCGGAAGAGCACACGTCTGAACTCCAGTCAC
+
+
+# Run Trimmomatic - code below has inputs as .fq.gz and outputs as .fastq.gz - adjust as needed    
+parallel --gnu "trimmomatic PE {1} {2} {1/.}_paired.fastq.gz {1/.}_unpaired.fastq.gz {2/.}_paired.fastq.gz {2/.}_unpaired.fastq.gz ILLUMINACLIP:TruSeq-PE.fa:2:30:10:8:true SLIDINGWINDOW:4:20" ::: *_1.fq.gz :::+ *_2.fq.gz
+
+
+
+### Move trimmed-paired files to new folder
+
+# Make new directory and move trimmed-paired files into that directory
+mkdir trimmed_paired_files
+mv *_paired.fast.gz trimmed_paired_files
+
+
+
+### FastQC and MultiQC on Trimmed files, in parallel - assumes trimmed-paired files are fastq.gz suffix - adjust as needed   
+
+# Run FastQC and MultiQC
+ls *.fastq.gz | parallel --gnu "fastqc {}"
+multiqc .
+
+
+
+### MEGAHIT (not in paralell because of large memory demand)
+
+# Install MEGAHIT
+mamba install -c bioconda megahit
+
+
+
+# Run MEGAHIT on forward and reverse reads of each sample
+# Change -t value to reflect number of parallel processors on your computer
+megahit -1 SAMPLE_R1.fastq.gz  -2 SAMPLE_R2.fastq.gz  -t 32  -o megahit_result_directory
+
+
+
+
+### Classify contigs using Kraken2 with GTDB as reference database
+
+# Install Kraken2
+mamba install -c bioconda kraken2
+
+
+# Download GTDB (release 202, 2021-10-05) built for Kraken 2 
+# Download/wget entire folder in following link and put in its own directory - "database"
+
+http://ftp.tue.mpg.de/ebio/projects/struo2/GTDB_release202/
+
+# Run Kraken2 on assemblies
+# takes about 1 hour/GB of fastq files
+kraken2 --threads 32 --db /File/Path/to/GTDB/db --output ERR2513180.output.txt --report ERR2513180.report.txt --paired ERR2513180_1.fastq.gz ERR2513180_2.fastq.gz
+
+### kraken-biom - convert Kraken2 report to biom table
+
+# Install kraken-biom
+pip install kraken-biom
+
+kraken-biom S1.txt S2.txt S3.txt S4.txt S5.txt S6.txt S7.txt S8.txt S9.txt S10.txt S11.txt
+
+### Additional data analysis found on DataAnalysis.R file
+
+
+
+
+
+
+
+
+
+
+
