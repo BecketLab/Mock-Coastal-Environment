@@ -99,7 +99,7 @@ http://ftp.tue.mpg.de/ebio/projects/struo2/GTDB_release202/
 
 # Run Kraken2 on assemblies
 # takes about 1 hour/GB of fastq files
-kraken2 --threads 32 --db /File/Path/to/GTDB/db --output ERR2513180.output.txt --report ERR2513180.report.txt --paired ERR2513180_1.fastq.gz ERR2513180_2.fastq.gz
+kraken2 --threads 32 --db /File/Path/to/GTDB/db final.contigs.fa
 
 ### kraken-biom - convert Kraken2 report to biom table
 
