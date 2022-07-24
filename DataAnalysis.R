@@ -6,7 +6,8 @@ library(zCompositions)
 library(mixOmics)
 library(ggpubr)  
 library(corrplot) 
-library(psych)    
+library(psych)
+library(ggtext)
 
 theme_set(theme_bw())
 
@@ -15,7 +16,7 @@ setwd("C:/Pearl_Code")
 merged_metagenomes <- import_biom("pearl.biom")
 
 ### Sample names
-samnames <- c("Initial_0_0", "Scripps_S1_1", "Scripps_S2_1", "Scripps_S3_1", "Mock_M1_1", "Mock_M2_1", "Scripps_S1_2", "Scripps_S2_2", "Scripps_S3_2", "Mock_M1_2", "Mock_M2_2")
+samnames <- c("Initial_0_0", "In situ_S1_24", "In situ_S2_24", "In situ_S3_24", "In vitro_M1_24", "In vitro_M2_24", "In situ_S1_48", "In situ_S2_48", "In situ_S3_48", "In vitro_M1_48", "In vitro_M2_48")
 
 ### Cleaning up phyloseq object
 merged_metagenomes@tax_table@.Data <- substring(merged_metagenomes@tax_table@.Data, 7)
@@ -26,7 +27,7 @@ colnames(merged_metagenomes@otu_table@.Data)<- samnames
 site <- sapply(strsplit(samnames, "_"), `[`, 1)
 samp <- sapply(strsplit(samnames, "_"), `[`, 2)
 day <- sapply(strsplit(samnames, "_"), `[`, 3)
-sampdf <- data.frame(Site=site, Day=day, Sample=samp)
+sampdf <- data.frame(Site=site, Hour=day, Sample=samp)
 rownames(sampdf) <- samnames
 ps =  phyloseq(otu_table = merged_metagenomes@otu_table, 
                tax_table = merged_metagenomes@tax_table,
@@ -71,35 +72,40 @@ nmds_scores$Site <- sampdf$Site
 nmds_scores_p$Site <- sampdf$Site
 nmds_scores_g$Site <- sampdf$Site
 
-nmds_scores$Day <- sampdf$Day
-nmds_scores_p$Day <- sampdf$Day
-nmds_scores_g$Day <- sampdf$Day
+nmds_scores$Hour <- sampdf$Hour
+nmds_scores_p$Hour <- sampdf$Hour
+nmds_scores_g$Hour <- sampdf$Hour
 
-nmds_scores$Sample <- sampdf$Sample
-nmds_scores_p$Sample <- sampdf$Sample
-nmds_scores_g$Sample <- sampdf$Sample
+nmds_scores$Samples <- c("Initial", "In situ 24h", "In situ 24h", "In situ 24h", "In vitro 24h", "In vitro 24h", "In situ 48h", "In situ 48h", "In situ 48h", "In vitro 48h", "In vitro 48h")
+nmds_scores_p$Samples <- c("Initial", "In situ 24h", "In situ 24h", "In situ 24h", "In vitro 24h", "In vitro 24h", "In situ 48h", "In situ 48h", "In situ 48h", "In vitro 48h", "In vitro 48h")
+nmds_scores_g$Samples <- c("Initial", "In situ 24h", "In situ 24h", "In situ 24h", "In vitro 24h", "In vitro 24h", "In situ 48h", "In situ 48h", "In situ 48h", "In vitro 48h", "In vitro 48h")
 
+colnames(nmds_scores) <- c("NMDS1", "NMDS2", "Site", "Hour", "Samples")
 
 #Make plots
 plotted_t <- ggplot(data = nmds_scores) +
-  ggtitle("Species") +
-  theme(plot.title = element_text(hjust = 0.5)) +
-  geom_mark_ellipse(aes(x=MDS1,y=MDS2,fill=Day,color=Day), expand = unit(0.5,"mm")) +
-  geom_point(aes(x=MDS1, y=MDS2, shape = Site, color = Day))
+  ggtitle(" ")  +
+  geom_mark_ellipse(aes(x=NMDS1,y=NMDS2,fill=Samples), expand = unit(0.5,"mm")) +
+  geom_point(aes(x=NMDS1, y=NMDS2, shape = Site, color = Hour)) +
+  scale_fill_discrete(labels = c(expression(italic("In situ")~"24h"), expression(italic("In situ")~"48h"), 
+                                expression(italic("In vitro")~"24h"), expression(italic("In vitro")~"48h"), "Initial")) +
+  scale_shape_discrete(labels = c(expression(italic("In situ")), expression(italic("In vitro")), "Initial")) +
+  theme(legend.text.align = 0)
+
 plotted_t_p <- ggplot(data = nmds_scores_p) +
   ggtitle("Phylum") +
   theme(plot.title = element_text(hjust = 0.5)) +
-  geom_mark_ellipse(aes(x=MDS1,y=MDS2,fill=Day,color=Day), expand = unit(0.5,"mm")) +
-  geom_point(aes(x=MDS1, y=MDS2, shape = Site, color = Day))
+  geom_mark_ellipse(aes(x=MDS1,y=MDS2,fill=Hour,color=Hour), expand = unit(0.5,"mm")) +
+  geom_point(aes(x=MDS1, y=MDS2, shape = Site, color = Hour))
+
 plotted_t_g <- ggplot(data = nmds_scores_g) +
   ggtitle("Genus") +
   theme(plot.title = element_text(hjust = 0.5)) +
-  geom_mark_ellipse(aes(x=MDS1,y=MDS2,fill=Day,color=Day), expand = unit(0.5,"mm")) +
-  geom_point(aes(x=MDS1, y=MDS2, shape = Site, color = Day))
+  geom_mark_ellipse(aes(x=MDS1,y=MDS2,fill=Hour,color=Hour), expand = unit(0.5,"mm")) +
+  geom_point(aes(x=MDS1, y=MDS2, shape = Site, color = Hour))
 
 #Display plots
 plotted_t
-
 plotted_t_p
 plotted_t_g
 
@@ -109,27 +115,29 @@ stat_d1 <- otu_m[2:6, ]
 sampdf_d1 <- sampdf[2:6, ]
 stat_d2 <- otu_m[7:11, ]
 sampdf_d2 <- sampdf[7:11, ]
+stat_ds <- otu_m[2:11, ]
+sampdf_ds <- sampdf[2:11, ]
 
 #ANOSIM
-ano = anosim(otu_m, sampdf$Day, distance = "euclidean", permutations = 99)
+ano = anosim(otu_m, sampdf$Hour, distance = "euclidean", permutations = 99)
 ano_d1 = anosim(stat_d1, sampdf_d1$Site, distance = "euclidean", permutations = 99)
 ano_d2 = anosim(stat_d2, sampdf_d2$Site, distance = "euclidean", permutations = 99)
+ano_ds = anosim(stat_ds, sampdf_ds$Hour, distance = "euclidean", permutations = 99)
 
 ano
 ano_d1
 ano_d2
+ano_ds
 
 ###                             PERMANOVA
-stat_ds <- otu_m[2:11, ]
-sampdf_ds <- sampdf[2:11, ]
 
-perma = adonis2(formula = stat_all ~ sampdf$Day, 
+perma = adonis2(formula = stat_all ~ sampdf$Hour, 
                permutations = 99,  method = "euclidean")
 perma_d1 = adonis2(formula = stat_d1 ~ sampdf_d1$Site,
                permutations = 99,  method = "euclidean")
 perma_d2 = adonis2(formula = stat_d2 ~ sampdf_d2$Site,
                permutations = 99,  method = "euclidean")
-perma_ds = adonis2(formula = stat_ds ~ sampdf_ds$Day,
+perma_ds = adonis2(formula = stat_ds ~ sampdf_ds$Hour,
                permutations = 99,  method = "euclidean")
   
 perma
